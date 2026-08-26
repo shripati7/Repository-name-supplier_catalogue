@@ -1,27 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'connect_supplier_screen.dart';
-import 'retailer_signup_screen.dart';
+import 'retailer_profile_screen.dart';
 
-class RetailerLoginScreen extends StatefulWidget {
-  const RetailerLoginScreen({super.key});
+class RetailerSignupScreen extends StatefulWidget {
+  const RetailerSignupScreen({super.key});
 
   @override
-  State<RetailerLoginScreen> createState() => _RetailerLoginScreenState();
+  State<RetailerSignupScreen> createState() => _RetailerSignupScreenState();
 }
 
-class _RetailerLoginScreenState extends State<RetailerLoginScreen> {
+class _RetailerSignupScreenState extends State<RetailerSignupScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   bool loading = false;
 
-  Future<void> login() async {
+  Future<void> signup() async {
     try {
       setState(() => loading = true);
 
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
@@ -30,14 +29,14 @@ class _RetailerLoginScreenState extends State<RetailerLoginScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ConnectSupplierScreen()),
+        MaterialPageRoute(builder: (_) => const RetailerProfileScreen()),
       );
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(e.message ?? 'Login Failed')));
+      ).showSnackBar(SnackBar(content: Text(e.message ?? 'Signup Failed')));
     }
 
     if (mounted) {
@@ -55,7 +54,7 @@ class _RetailerLoginScreenState extends State<RetailerLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Retailer Login')),
+      appBar: AppBar(title: const Text('Retailer Signup')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -85,23 +84,9 @@ class _RetailerLoginScreenState extends State<RetailerLoginScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: loading ? null : login,
-                child: Text(loading ? 'Please Wait...' : 'Login'),
+                onPressed: loading ? null : signup,
+                child: Text(loading ? 'Please Wait...' : 'Create Account'),
               ),
-            ),
-
-            const SizedBox(height: 16),
-
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const RetailerSignupScreen(),
-                  ),
-                );
-              },
-              child: const Text('Create New Retailer Account'),
             ),
           ],
         ),

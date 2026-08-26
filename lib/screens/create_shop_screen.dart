@@ -17,8 +17,31 @@ class _CreateShopScreenState extends State<CreateShopScreen> {
 
     final user = FirebaseAuth.instance.currentUser;
 
-    if (user == null) return;
+    if (user == null) {
+      setState(() => loading = false);
+      return;
+    }
 
+    final shopDoc = await FirebaseFirestore.instance
+        .collection('shops')
+        .doc(user.uid)
+        .get();
+
+    // Shop already exists
+    if (shopDoc.exists) {
+      final existingShopId = shopDoc.data()?['shopId'] ?? '';
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Shop ID Already Exists: $existingShopId')),
+      );
+
+      setState(() => loading = false);
+      return;
+    }
+
+    // Create new shop only once
     final shopId = 'SJ${DateTime.now().millisecondsSinceEpoch}';
 
     await FirebaseFirestore.instance.collection('shops').doc(user.uid).set({
