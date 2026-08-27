@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../services/cart_service.dart';
 import '../services/product_service.dart';
+import 'cart_screen.dart';
+import 'my_orders_screen.dart';
 
 class RetailerCatalogueScreen extends StatelessWidget {
   final String shopId;
@@ -21,7 +24,31 @@ class RetailerCatalogueScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Catalogue - $shopId')),
+      appBar: AppBar(
+        title: Text('Catalogue - $shopId'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.receipt_long),
+            tooltip: 'My Orders',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MyOrdersScreen()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            tooltip: 'Cart',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CartScreen()),
+              );
+            },
+          ),
+        ],
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: ProductService().productsByShopId(shopId),
         builder: (context, snapshot) {
@@ -58,6 +85,26 @@ class RetailerCatalogueScreen extends StatelessWidget {
                       Text(data['brand'] ?? ''),
                       Text('₹ ${formatPrice(data['price'])}'),
                     ],
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.add_shopping_cart),
+                    onPressed: () async {
+                      await CartService().addToCart(
+                        productId: docs[index].id,
+                        supplierShopId: shopId,
+                        productName: data['productName'] ?? '',
+                        category: data['category'] ?? '',
+                        brand: data['brand'] ?? '',
+                        price: (data['price'] ?? 0).toDouble(),
+                        imageUrl: data['imageUrl'] ?? '',
+                      );
+
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Added To Cart')),
+                        );
+                      }
+                    },
                   ),
                 ),
               );

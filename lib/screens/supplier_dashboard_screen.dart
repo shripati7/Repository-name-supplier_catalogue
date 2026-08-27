@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'connected_retailers_screen.dart';
 import 'my_catalogue_screen.dart';
+import 'requirements_screen.dart';
 import 'subscription_screen.dart';
+import 'supplier_orders_screen.dart';
 
 class SupplierDashboardScreen extends StatelessWidget {
   const SupplierDashboardScreen({super.key});
@@ -28,6 +31,7 @@ class SupplierDashboardScreen extends StatelessWidget {
                 },
               ),
             ),
+
             Card(
               child: ListTile(
                 title: const Text('Subscription Status'),
@@ -42,16 +46,56 @@ class SupplierDashboardScreen extends StatelessWidget {
                 },
               ),
             ),
-            const Card(
+
+            Card(
               child: ListTile(
-                title: Text('Connected Retailers'),
-                subtitle: Text('Coming Soon'),
+                title: const Text('Connected Retailers'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ConnectedRetailersScreen(),
+                    ),
+                  );
+                },
               ),
             ),
+
+            Card(
+              child: ListTile(
+                title: const Text('Orders'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const SupplierOrdersScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            Card(
+              child: ListTile(
+                title: const Text('Requirements'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const RequirementsScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+
             const Card(
               child: ListTile(
-                title: Text('Orders'),
-                subtitle: Text('Coming Soon'),
+                title: Text('Chat'),
+                subtitle: Text('Locked - Coming Soon'),
               ),
             ),
           ],

@@ -88,6 +88,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   Future<void> saveProduct() async {
+    if (loading) return;
+
     if (productNameController.text.trim().isEmpty ||
         priceController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -111,14 +113,25 @@ class _AddProductScreenState extends State<AddProductScreen> {
       }
     }
 
-    await ProductService().addProduct(
-      productName: productNameController.text.trim(),
-      category: categoryController.text.trim(),
-      brand: brandController.text.trim(),
-      description: descriptionController.text.trim(),
-      price: double.tryParse(priceController.text.trim()) ?? 0,
-      imageUrl: imageUrl,
-    );
+    try {
+      await ProductService().addProduct(
+        productName: productNameController.text.trim(),
+        category: categoryController.text.trim(),
+        brand: brandController.text.trim(),
+        description: descriptionController.text.trim(),
+        price: double.tryParse(priceController.text.trim()) ?? 0,
+        imageUrl: imageUrl,
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Product already exists')));
+
+      setState(() => loading = false);
+      return;
+    }
 
     if (!mounted) return;
 

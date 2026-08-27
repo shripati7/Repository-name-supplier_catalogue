@@ -22,6 +22,18 @@ class ProductService {
 
     final shopId = await ShopService().getShopId();
 
+    final existing = await _firestore
+        .collection('products')
+        .where('supplierId', isEqualTo: user.uid)
+        .where('productName', isEqualTo: productName)
+        .where('brand', isEqualTo: brand)
+        .where('price', isEqualTo: price)
+        .get();
+
+    if (existing.docs.isNotEmpty) {
+      throw Exception('Product already exists');
+    }
+
     await _firestore.collection('products').add({
       'supplierId': user.uid,
       'shopId': shopId,

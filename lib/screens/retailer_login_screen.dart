@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../services/connection_service.dart';
 import 'connect_supplier_screen.dart';
+import 'retailer_catalogue_screen.dart';
 import 'retailer_signup_screen.dart';
 
 class RetailerLoginScreen extends StatefulWidget {
@@ -26,12 +28,26 @@ class _RetailerLoginScreenState extends State<RetailerLoginScreen> {
         password: passwordController.text.trim(),
       );
 
+      final connection = await ConnectionService().getMyConnection();
+
       if (!mounted) return;
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const ConnectSupplierScreen()),
-      );
+      if (connection.exists) {
+        final data = connection.data() as Map<String, dynamic>;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) =>
+                RetailerCatalogueScreen(shopId: data['supplierShopId'] ?? ''),
+          ),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const ConnectSupplierScreen()),
+        );
+      }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
 
