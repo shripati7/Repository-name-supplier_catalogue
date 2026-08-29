@@ -76,6 +76,10 @@ class _SupplierOrdersScreenState extends State<SupplierOrdersScreen> {
 
               final status = data['status'] ?? 'Pending';
 
+              final price = (data['price'] ?? 0).toDouble();
+              final quantity = data['quantity'] ?? 1;
+              final total = price * quantity;
+
               return Card(
                 margin: const EdgeInsets.all(10),
                 child: Padding(
@@ -85,10 +89,27 @@ class _SupplierOrdersScreenState extends State<SupplierOrdersScreen> {
                     children: [
                       Text(
                         data['productName'] ?? '',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
 
                       const SizedBox(height: 8),
+
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(status),
+                      ),
+
+                      const SizedBox(height: 10),
 
                       Text('Retailer: ${data['retailerName'] ?? ''}'),
 
@@ -96,13 +117,24 @@ class _SupplierOrdersScreenState extends State<SupplierOrdersScreen> {
 
                       Text('Email: ${data['retailerEmail'] ?? ''}'),
 
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 8),
+
+                      Text('Date: ${data['orderDate'] ?? ''}'),
+
+                      Text('Day: ${data['orderDay'] ?? ''}'),
+
+                      const SizedBox(height: 8),
 
                       Text('Brand: ${data['brand'] ?? ''}'),
 
-                      Text('Price: ₹ ${formatPrice(data['price'])}'),
+                      Text('Price: ₹ ${formatPrice(price)}'),
 
-                      Text('Qty: ${data['quantity'] ?? 1}'),
+                      Text('Qty: $quantity'),
+
+                      Text(
+                        'Total: ₹ ${formatPrice(total)}',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
 
                       const SizedBox(height: 12),
 
