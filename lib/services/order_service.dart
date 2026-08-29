@@ -45,27 +45,25 @@ class OrderService {
     final orderDate = '${now.day} ${months[now.month - 1]} ${now.year}';
     final orderDay = days[now.weekday - 1];
 
+    final quantity = cartItem['quantity'] ?? 1;
+
     await _firestore.collection('orders').add({
       'supplierShopId': cartItem['supplierShopId'] ?? '',
-
       'retailerId': user.uid,
       'retailerShopId': retailer.retailerShopId,
       'retailerName': retailer.retailerName,
       'retailerEmail': retailer.email,
-
       'productId': cartItem['productId'] ?? '',
       'productName': cartItem['productName'] ?? '',
       'category': cartItem['category'] ?? '',
       'brand': cartItem['brand'] ?? '',
       'price': (cartItem['price'] ?? 0).toDouble(),
       'moq': cartItem['moq'] ?? 1,
-      'quantity': cartItem['quantity'] ?? 1,
-
+      'quantity': quantity,
+      'acceptedQuantity': quantity,
       'orderDate': orderDate,
       'orderDay': orderDay,
-
       'status': 'Pending',
-
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
@@ -89,6 +87,16 @@ class OrderService {
   Future<void> updateStatus(String orderId, String status) async {
     await _firestore.collection('orders').doc(orderId).update({
       'status': status,
+    });
+  }
+
+  Future<void> updateAcceptedQuantity(
+    String orderId,
+    int acceptedQuantity,
+  ) async {
+    await _firestore.collection('orders').doc(orderId).update({
+      'acceptedQuantity': acceptedQuantity,
+      'status': 'Partial Accepted',
     });
   }
 

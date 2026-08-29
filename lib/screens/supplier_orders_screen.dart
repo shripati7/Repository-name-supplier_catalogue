@@ -18,6 +18,7 @@ class _SupplierOrdersScreenState extends State<SupplierOrdersScreen> {
   final List<String> statuses = [
     'Pending',
     'Accepted',
+    'Partial Accepted',
     'Packing',
     'Packed',
     'Dispatched',
@@ -46,6 +47,59 @@ class _SupplierOrdersScreenState extends State<SupplierOrdersScreen> {
     }
 
     return value.toStringAsFixed(2);
+  }
+
+  Future<void> showPartialAcceptDialog(String orderId, int orderedQty) async {
+    final controller = TextEditingController(text: orderedQty.toString());
+
+    final acceptedQty = await showDialog<int>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Partial Acceptance'),
+          content: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              labelText: 'Accepted Quantity',
+              hintText: 'Max $orderedQty',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final qty = int.tryParse(controller.text);
+
+                if (qty == null || qty <= 0 || qty >= orderedQty) {
+                  return;
+                }
+
+                Navigator.pop(dialogContext, qty);
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (acceptedQty == null) return;
+
+    await OrderService().updateAcceptedQuantity(orderId, acceptedQty);
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Order partially accepted ($acceptedQty/$orderedQty)'),
+      ),
+    );
   }
 
   @override
@@ -77,8 +131,13 @@ class _SupplierOrdersScreenState extends State<SupplierOrdersScreen> {
               final status = data['status'] ?? 'Pending';
 
               final price = (data['price'] ?? 0).toDouble();
-              final quantity = data['quantity'] ?? 1;
-              final total = price * quantity;
+
+              final quantity = ((data['quantity'] ?? 1) as num).toInt();
+
+              final acceptedQuantity =
+                  ((data['acceptedQuantity'] ?? quantity) as num).toInt();
+
+              final total = price * acceptedQuantity;
 
               return Card(
                 margin: const EdgeInsets.all(10),
@@ -129,12 +188,27 @@ class _SupplierOrdersScreenState extends State<SupplierOrdersScreen> {
 
                       Text('Price: ₹ ${formatPrice(price)}'),
 
-                      Text('Qty: $quantity'),
+                      Text('Ordered Qty: $quantity'),
+
+                      Text('Accepted Qty: $acceptedQuantity'),
 
                       Text(
                         'Total: ₹ ${formatPrice(total)}',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
+
+                      const SizedBox(height: 12),
+
+                      if (status == 'Pending' || status == 'Accepted')
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              showPartialAcceptDialog(docs[index].id, quantity);
+                            },
+                            child: const Text('Partially Accept'),
+                          ),
+                        ),
 
                       const SizedBox(height: 12),
 

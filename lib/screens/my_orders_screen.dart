@@ -53,10 +53,19 @@ class MyOrdersScreen extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
+
                       Text('Brand: ${data['brand'] ?? ''}'),
+
                       Text('Price: ₹ ${formatPrice(data['price'])}'),
-                      Text('Qty: ${data['quantity'] ?? 1}'),
+
+                      Text('Ordered Qty: ${data['quantity'] ?? 1}'),
+
+                      Text(
+                        'Accepted Qty: ${data['acceptedQuantity'] ?? data['quantity'] ?? 1}',
+                      ),
+
                       Text('Status: $status'),
+
                       const SizedBox(height: 10),
 
                       if (status == 'Cancelled' || status == 'Dispatched')
