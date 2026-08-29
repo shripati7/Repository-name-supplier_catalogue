@@ -7,6 +7,7 @@ class ProductModel {
   final String brand;
   final String description;
   final double price;
+  final int moq;
   final String imageUrl;
 
   ProductModel({
@@ -18,6 +19,7 @@ class ProductModel {
     required this.brand,
     required this.description,
     required this.price,
+    required this.moq,
     required this.imageUrl,
   });
 
@@ -31,6 +33,7 @@ class ProductModel {
       brand: map['brand'] ?? '',
       description: map['description'] ?? '',
       price: (map['price'] ?? 0).toDouble(),
+      moq: (map['moq'] ?? 1) as int,
       imageUrl: map['imageUrl'] ?? '',
     );
   }
@@ -44,6 +47,7 @@ class ProductModel {
       'brand': brand,
       'description': description,
       'price': price,
+      'moq': moq,
       'imageUrl': imageUrl,
     };
   }

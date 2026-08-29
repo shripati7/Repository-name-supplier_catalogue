@@ -43,7 +43,6 @@ class OrderService {
     ];
 
     final orderDate = '${now.day} ${months[now.month - 1]} ${now.year}';
-
     final orderDay = days[now.weekday - 1];
 
     await _firestore.collection('orders').add({
@@ -52,12 +51,14 @@ class OrderService {
       'retailerId': user.uid,
       'retailerShopId': retailer.retailerShopId,
       'retailerName': retailer.retailerName,
+      'retailerEmail': retailer.email,
 
       'productId': cartItem['productId'] ?? '',
       'productName': cartItem['productName'] ?? '',
       'category': cartItem['category'] ?? '',
       'brand': cartItem['brand'] ?? '',
       'price': (cartItem['price'] ?? 0).toDouble(),
+      'moq': cartItem['moq'] ?? 1,
       'quantity': cartItem['quantity'] ?? 1,
 
       'orderDate': orderDate,

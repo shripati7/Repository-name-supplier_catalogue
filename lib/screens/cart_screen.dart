@@ -53,6 +53,7 @@ class CartScreen extends StatelessWidget {
                     final data = docs[index].data() as Map<String, dynamic>;
 
                     final quantity = data['quantity'] ?? 1;
+                    final moq = data['moq'] ?? 1;
 
                     return Card(
                       margin: const EdgeInsets.all(10),
@@ -70,17 +71,15 @@ class CartScreen extends StatelessWidget {
                                       fit: BoxFit.cover,
                                     )
                                   : const Icon(Icons.image),
-
                               title: Text(data['productName'] ?? ''),
-
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(data['brand'] ?? ''),
                                   Text('₹ ${formatPrice(data['price'])}'),
+                                  Text('MOQ: $moq'),
                                 ],
                               ),
-
                               trailing: IconButton(
                                 icon: const Icon(Icons.delete),
                                 onPressed: () async {
@@ -90,20 +89,32 @@ class CartScreen extends StatelessWidget {
                                 },
                               ),
                             ),
-
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.remove_circle),
                                   onPressed: () async {
-                                    await CartService().updateQuantity(
-                                      docs[index].id,
-                                      quantity - 1,
-                                    );
+                                    if (quantity > moq) {
+                                      await CartService().updateQuantity(
+                                        docs[index].id,
+                                        quantity - 1,
+                                      );
+                                    } else {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Minimum order quantity is $moq',
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    }
                                   },
                                 ),
-
                                 Text(
                                   quantity.toString(),
                                   style: const TextStyle(
@@ -111,7 +122,6 @@ class CartScreen extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-
                                 IconButton(
                                   icon: const Icon(Icons.add_circle),
                                   onPressed: () async {
@@ -130,7 +140,6 @@ class CartScreen extends StatelessWidget {
                   },
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -142,13 +151,31 @@ class CartScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
                     const SizedBox(height: 12),
-
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () async {
+                          for (final doc in docs) {
+                            final item = doc.data() as Map<String, dynamic>;
+
+                            final quantity = item['quantity'] ?? 1;
+                            final moq = item['moq'] ?? 1;
+
+                            if (quantity < moq) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '${item['productName']} requires minimum quantity $moq',
+                                    ),
+                                  ),
+                                );
+                              }
+                              return;
+                            }
+                          }
+
                           for (final doc in docs) {
                             final item = doc.data() as Map<String, dynamic>;
 

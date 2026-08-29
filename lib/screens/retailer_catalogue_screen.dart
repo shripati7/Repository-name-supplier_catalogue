@@ -96,6 +96,7 @@ class RetailerCatalogueScreen extends StatelessWidget {
                         category: data['category'] ?? '',
                         brand: data['brand'] ?? '',
                         price: (data['price'] ?? 0).toDouble(),
+                        moq: (data['moq'] ?? 1) as int,
                         imageUrl: data['imageUrl'] ?? '',
                       );
 

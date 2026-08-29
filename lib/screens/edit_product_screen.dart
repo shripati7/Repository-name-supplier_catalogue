@@ -18,6 +18,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   late final TextEditingController brandController;
   late final TextEditingController descriptionController;
   late final TextEditingController priceController;
+  late final TextEditingController moqController;
 
   bool loading = false;
 
@@ -40,6 +41,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
     priceController = TextEditingController(
       text: widget.product.price.toString(),
     );
+
+    moqController = TextEditingController(text: widget.product.moq.toString());
   }
 
   Future<void> updateProduct() async {
@@ -59,6 +62,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       brand: brandController.text.trim(),
       description: descriptionController.text.trim(),
       price: double.tryParse(priceController.text.trim()) ?? 0,
+      moq: int.tryParse(moqController.text.trim()) ?? 1,
       imageUrl: widget.product.imageUrl,
     );
 
@@ -76,6 +80,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     brandController.dispose();
     descriptionController.dispose();
     priceController.dispose();
+    moqController.dispose();
     super.dispose();
   }
 
@@ -91,29 +96,49 @@ class _EditProductScreenState extends State<EditProductScreen> {
               controller: productNameController,
               decoration: const InputDecoration(labelText: 'Product Name'),
             ),
+
             const SizedBox(height: 12),
+
             TextField(
               controller: categoryController,
               decoration: const InputDecoration(labelText: 'Category'),
             ),
+
             const SizedBox(height: 12),
+
             TextField(
               controller: brandController,
               decoration: const InputDecoration(labelText: 'Brand'),
             ),
+
             const SizedBox(height: 12),
+
             TextField(
               controller: descriptionController,
               maxLines: 3,
               decoration: const InputDecoration(labelText: 'Description'),
             ),
+
             const SizedBox(height: 12),
+
             TextField(
               controller: priceController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(labelText: 'Price'),
             ),
+
+            const SizedBox(height: 12),
+
+            TextField(
+              controller: moqController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'MOQ (Minimum Order Quantity)',
+              ),
+            ),
+
             const SizedBox(height: 24),
+
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

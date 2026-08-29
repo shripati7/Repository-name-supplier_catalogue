@@ -14,6 +14,7 @@ class ProductService {
     required String brand,
     required String description,
     required double price,
+    required int moq,
     String imageUrl = '',
   }) async {
     final user = FirebaseAuth.instance.currentUser;
@@ -42,6 +43,7 @@ class ProductService {
       'brand': brand,
       'description': description,
       'price': price,
+      'moq': moq,
       'imageUrl': imageUrl,
       'createdAt': FieldValue.serverTimestamp(),
     });

@@ -52,17 +52,11 @@ class MyOrdersScreen extends StatelessWidget {
                         data['productName'] ?? '',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-
                       const SizedBox(height: 8),
-
                       Text('Brand: ${data['brand'] ?? ''}'),
-
                       Text('Price: ₹ ${formatPrice(data['price'])}'),
-
                       Text('Qty: ${data['quantity'] ?? 1}'),
-
                       Text('Status: $status'),
-
                       const SizedBox(height: 10),
 
                       if (status == 'Cancelled' || status == 'Dispatched')
@@ -77,7 +71,9 @@ class MyOrdersScreen extends StatelessWidget {
                                 category: data['category'] ?? '',
                                 brand: data['brand'] ?? '',
                                 price: (data['price'] ?? 0).toDouble(),
+                                moq: (data['moq'] ?? 1) as int,
                                 imageUrl: '',
+                                quantity: data['quantity'] ?? 1,
                               );
 
                               if (context.mounted) {

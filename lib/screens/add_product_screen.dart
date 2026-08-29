@@ -22,6 +22,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final brandController = TextEditingController();
   final descriptionController = TextEditingController();
   final priceController = TextEditingController();
+  final moqController = TextEditingController(text: '1');
 
   bool loading = false;
   File? selectedImage;
@@ -120,6 +121,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         brand: brandController.text.trim(),
         description: descriptionController.text.trim(),
         price: double.tryParse(priceController.text.trim()) ?? 0,
+        moq: int.tryParse(moqController.text.trim()) ?? 1,
         imageUrl: imageUrl,
       );
     } catch (e) {
@@ -149,6 +151,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     brandController.dispose();
     descriptionController.dispose();
     priceController.dispose();
+    moqController.dispose();
     super.dispose();
   }
 
@@ -184,7 +187,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       ),
               ),
             ),
-
             const SizedBox(height: 20),
 
             TextField(
@@ -220,6 +222,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
               controller: priceController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(labelText: 'Price'),
+            ),
+
+            const SizedBox(height: 12),
+
+            TextField(
+              controller: moqController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'MOQ (Minimum Order Quantity)',
+              ),
             ),
 
             const SizedBox(height: 24),

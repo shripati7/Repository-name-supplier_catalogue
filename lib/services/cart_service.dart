@@ -11,7 +11,9 @@ class CartService {
     required String category,
     required String brand,
     required double price,
+    required int moq,
     required String imageUrl,
+    int? quantity,
   }) async {
     final user = FirebaseAuth.instance.currentUser;
 
@@ -26,9 +28,9 @@ class CartService {
     final doc = await docRef.get();
 
     if (doc.exists) {
-      final qty = (doc.data()?['quantity'] ?? 1) as int;
+      final existingQty = (doc.data()?['quantity'] ?? moq) as int;
 
-      await docRef.update({'quantity': qty + 1});
+      await docRef.update({'quantity': existingQty + (quantity ?? moq)});
     } else {
       await docRef.set({
         'productId': productId,
@@ -37,7 +39,8 @@ class CartService {
         'category': category,
         'brand': brand,
         'price': price,
-        'quantity': 1,
+        'moq': moq,
+        'quantity': quantity ?? moq,
         'imageUrl': imageUrl,
         'createdAt': FieldValue.serverTimestamp(),
       });

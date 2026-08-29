@@ -15,6 +15,15 @@ class _SupplierOrdersScreenState extends State<SupplierOrdersScreen> {
   String supplierShopId = '';
   bool loading = true;
 
+  final List<String> statuses = [
+    'Pending',
+    'Accepted',
+    'Packing',
+    'Packed',
+    'Dispatched',
+    'Rejected',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -37,15 +46,6 @@ class _SupplierOrdersScreenState extends State<SupplierOrdersScreen> {
     }
 
     return value.toStringAsFixed(2);
-  }
-
-  Widget buildActionButton(String text, String orderId, String nextStatus) {
-    return ElevatedButton(
-      onPressed: () async {
-        await OrderService().updateStatus(orderId, nextStatus);
-      },
-      child: Text(text),
-    );
   }
 
   @override
@@ -88,11 +88,15 @@ class _SupplierOrdersScreenState extends State<SupplierOrdersScreen> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
 
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 8),
 
                       Text('Retailer: ${data['retailerName'] ?? ''}'),
 
                       Text('Shop ID: ${data['retailerShopId'] ?? ''}'),
+
+                      Text('Email: ${data['retailerEmail'] ?? ''}'),
+
+                      const SizedBox(height: 6),
 
                       Text('Brand: ${data['brand'] ?? ''}'),
 
@@ -100,70 +104,31 @@ class _SupplierOrdersScreenState extends State<SupplierOrdersScreen> {
 
                       Text('Qty: ${data['quantity'] ?? 1}'),
 
-                      Text('Status: $status'),
+                      const SizedBox(height: 12),
 
-                      const SizedBox(height: 10),
-
-                      if (status == 'Pending')
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  await OrderService().updateStatus(
-                                    docs[index].id,
-                                    'Accepted',
-                                  );
-                                },
-                                child: const Text('Accept'),
-                              ),
-                            ),
-
-                            const SizedBox(width: 10),
-
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  await OrderService().updateStatus(
-                                    docs[index].id,
-                                    'Rejected',
-                                  );
-                                },
-                                child: const Text('Reject'),
-                              ),
-                            ),
-                          ],
+                      DropdownButtonFormField<String>(
+                        initialValue: statuses.contains(status)
+                            ? status
+                            : 'Pending',
+                        decoration: const InputDecoration(
+                          labelText: 'Order Status',
+                          border: OutlineInputBorder(),
                         ),
+                        items: statuses.map((item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(item),
+                          );
+                        }).toList(),
+                        onChanged: (value) async {
+                          if (value == null) return;
 
-                      if (status == 'Accepted')
-                        SizedBox(
-                          width: double.infinity,
-                          child: buildActionButton(
-                            'Move To Packing',
+                          await OrderService().updateStatus(
                             docs[index].id,
-                            'Packing',
-                          ),
-                        ),
-
-                      if (status == 'Packing')
-                        SizedBox(
-                          width: double.infinity,
-                          child: buildActionButton(
-                            'Move To Packed',
-                            docs[index].id,
-                            'Packed',
-                          ),
-                        ),
-
-                      if (status == 'Packed')
-                        SizedBox(
-                          width: double.infinity,
-                          child: buildActionButton(
-                            'Move To Dispatched',
-                            docs[index].id,
-                            'Dispatched',
-                          ),
-                        ),
+                            value,
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
