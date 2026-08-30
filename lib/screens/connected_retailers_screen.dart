@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../services/shop_service.dart';
 import '../services/connection_service.dart';
+import 'add_retailer_screen.dart';
 
 class ConnectedRetailersScreen extends StatefulWidget {
   const ConnectedRetailersScreen({super.key});
@@ -25,12 +26,19 @@ class _ConnectedRetailersScreenState extends State<ConnectedRetailersScreen> {
   Future<void> loadShopId() async {
     supplierShopId = await ShopService().getShopId();
 
-    debugPrint('==========================');
-    debugPrint('SUPPLIER SHOP ID = $supplierShopId');
-    debugPrint('==========================');
-
     if (mounted) {
       setState(() => loading = false);
+    }
+  }
+
+  Future<void> openAddRetailer() async {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => const AddRetailerScreen()),
+    );
+
+    if (result == true && mounted) {
+      setState(() {});
     }
   }
 
@@ -40,16 +48,21 @@ class _ConnectedRetailersScreenState extends State<ConnectedRetailersScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    debugPrint('QUERY SHOP ID = $supplierShopId');
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Connected Retailers')),
+      appBar: AppBar(
+        title: const Text('Connected Retailers'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_add),
+            tooltip: 'Add Retailer',
+            onPressed: openAddRetailer,
+          ),
+        ],
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: ConnectionService().retailersBySupplier(supplierShopId),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            debugPrint('FIRESTORE ERROR = ${snapshot.error}');
-
             return Center(child: Text('Error: ${snapshot.error}'));
           }
 
@@ -59,10 +72,32 @@ class _ConnectedRetailersScreenState extends State<ConnectedRetailersScreen> {
 
           final docs = snapshot.data!.docs;
 
-          debugPrint('RETAILERS FOUND = ${docs.length}');
-
           if (docs.isEmpty) {
-            return const Center(child: Text('No Connected Retailers'));
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.people_outline, size: 72),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'No Connected Retailers',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                      onPressed: openAddRetailer,
+                      icon: const Icon(Icons.person_add),
+                      label: const Text('Add Retailer'),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
 
           return ListView.builder(
@@ -70,11 +105,10 @@ class _ConnectedRetailersScreenState extends State<ConnectedRetailersScreen> {
             itemBuilder: (context, index) {
               final data = docs[index].data() as Map<String, dynamic>;
 
-              debugPrint('RETAILER DATA = $data');
-
               return Card(
                 margin: const EdgeInsets.all(10),
                 child: ListTile(
+                  leading: const CircleAvatar(child: Icon(Icons.store)),
                   title: Text((data['retailerName'] ?? '').toString()),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

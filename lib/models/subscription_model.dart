@@ -2,8 +2,13 @@ class SubscriptionModel {
   final String supplierId;
   final String planName;
   final String status;
+
   final DateTime? startDate;
   final DateTime? endDate;
+
+  final int retailerLimit;
+  final int connectedRetailers;
+  final int freeTrialDays;
 
   SubscriptionModel({
     required this.supplierId,
@@ -11,6 +16,9 @@ class SubscriptionModel {
     required this.status,
     this.startDate,
     this.endDate,
+    required this.retailerLimit,
+    required this.connectedRetailers,
+    required this.freeTrialDays,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +28,9 @@ class SubscriptionModel {
       'status': status,
       'startDate': startDate,
       'endDate': endDate,
+      'retailerLimit': retailerLimit,
+      'connectedRetailers': connectedRetailers,
+      'freeTrialDays': freeTrialDays,
     };
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../services/dashboard_service.dart';
 import '../services/shop_service.dart';
@@ -21,6 +22,8 @@ class SupplierDashboardScreen extends StatefulWidget {
 class _SupplierDashboardScreenState extends State<SupplierDashboardScreen> {
   bool loading = true;
 
+  String supplierShopId = '';
+
   int products = 0;
   int retailers = 0;
   int pendingOrders = 0;
@@ -38,6 +41,8 @@ class _SupplierDashboardScreenState extends State<SupplierDashboardScreen> {
     });
 
     final shopId = await ShopService().getShopId();
+
+    supplierShopId = shopId;
 
     final dashboardService = DashboardService();
 
@@ -79,6 +84,18 @@ class _SupplierDashboardScreenState extends State<SupplierDashboardScreen> {
     );
   }
 
+  Future<void> copySupplierId() async {
+    if (supplierShopId.isEmpty) return;
+
+    await Clipboard.setData(ClipboardData(text: supplierShopId));
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Supplier ID Copied')));
+  }
+
   @override
   Widget build(BuildContext context) {
     if (loading) {
@@ -103,6 +120,24 @@ class _SupplierDashboardScreenState extends State<SupplierDashboardScreen> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              Card(
+                child: ListTile(
+                  title: const Text('My Shop'),
+                  subtitle: Text(
+                    supplierShopId.isEmpty
+                        ? 'Shop ID Not Found'
+                        : supplierShopId,
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.copy),
+                    tooltip: 'Copy Supplier ID',
+                    onPressed: copySupplierId,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
               Row(
                 children: [
                   metricCard('Products', products),

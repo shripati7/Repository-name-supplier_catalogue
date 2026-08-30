@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/retailer_service.dart';
-import 'connect_supplier_screen.dart';
+import 'my_orders_screen.dart';
 
 class RetailerProfileScreen extends StatefulWidget {
   const RetailerProfileScreen({super.key});
@@ -25,27 +25,54 @@ class _RetailerProfileScreenState extends State<RetailerProfileScreen> {
     if (retailerNameController.text.trim().isEmpty ||
         ownerNameController.text.trim().isEmpty ||
         mobile1Controller.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Retailer Name, Owner Name and Mobile Number are required',
+          ),
+        ),
+      );
       return;
     }
 
-    setState(() => loading = true);
+    try {
+      setState(() => loading = true);
 
-    await RetailerService().saveRetailerProfile(
-      retailerName: retailerNameController.text.trim(),
-      ownerName: ownerNameController.text.trim(),
-      mobile1: mobile1Controller.text.trim(),
-      mobile2: mobile2Controller.text.trim(),
-      address: addressController.text.trim(),
-      city: cityController.text.trim(),
-      pincode: pincodeController.text.trim(),
-    );
+      await RetailerService().saveRetailerProfile(
+        retailerName: retailerNameController.text.trim(),
+        ownerName: ownerNameController.text.trim(),
+        mobile1: mobile1Controller.text.trim(),
+        mobile2: mobile2Controller.text.trim(),
+        address: addressController.text.trim(),
+        city: cityController.text.trim(),
+        pincode: pincodeController.text.trim(),
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const ConnectSupplierScreen()),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Profile Saved. Wait for supplier connection approval.',
+          ),
+        ),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MyOrdersScreen()),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => loading = false);
+      }
+    }
   }
 
   @override

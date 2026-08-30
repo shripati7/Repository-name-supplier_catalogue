@@ -1,27 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'supplier_dashboard_screen.dart';
-import 'supplier_signup_screen.dart';
+import 'create_shop_screen.dart';
 
-class SupplierLoginScreen extends StatefulWidget {
-  const SupplierLoginScreen({super.key});
+class SupplierSignupScreen extends StatefulWidget {
+  const SupplierSignupScreen({super.key});
 
   @override
-  State<SupplierLoginScreen> createState() => _SupplierLoginScreenState();
+  State<SupplierSignupScreen> createState() => _SupplierSignupScreenState();
 }
 
-class _SupplierLoginScreenState extends State<SupplierLoginScreen> {
+class _SupplierSignupScreenState extends State<SupplierSignupScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   bool loading = false;
 
-  Future<void> login() async {
+  Future<void> signup() async {
     try {
       setState(() => loading = true);
 
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
@@ -30,14 +29,14 @@ class _SupplierLoginScreenState extends State<SupplierLoginScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const SupplierDashboardScreen()),
+        MaterialPageRoute(builder: (_) => const CreateShopScreen()),
       );
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(e.message ?? 'Login Failed')));
+      ).showSnackBar(SnackBar(content: Text(e.message ?? 'Signup Failed')));
     }
 
     if (mounted) {
@@ -55,7 +54,7 @@ class _SupplierLoginScreenState extends State<SupplierLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Supplier Login')),
+      appBar: AppBar(title: const Text('Supplier Signup')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -85,23 +84,9 @@ class _SupplierLoginScreenState extends State<SupplierLoginScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: loading ? null : login,
-                child: Text(loading ? 'Please Wait...' : 'Login'),
+                onPressed: loading ? null : signup,
+                child: Text(loading ? 'Please Wait...' : 'Create Account'),
               ),
-            ),
-
-            const SizedBox(height: 16),
-
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const SupplierSignupScreen(),
-                  ),
-                );
-              },
-              child: const Text('Create New Supplier Account'),
             ),
           ],
         ),
