@@ -21,13 +21,15 @@ class ConnectionService {
       throw Exception('SHOP NOT FOUND');
     }
 
-    final supplierShopId = shopDoc.data()?['shopId'] ?? '';
+    final shopData = shopDoc.data()!;
+
+    final supplierShopId = (shopData['shopId'] ?? '').toString();
 
     if (supplierShopId.isEmpty) {
       throw Exception('SHOP NOT FOUND');
     }
 
-    // Subscription
+    // Subscription Check
     final subscriptionDoc = await _firestore
         .collection('subscriptions')
         .doc(user.uid)
@@ -48,7 +50,7 @@ class ConnectionService {
       throw Exception('Retailer limit reached. Upgrade plan.');
     }
 
-    // Retailer lookup by retailerShopId
+    // Retailer Lookup
     final retailerSnapshot = await _firestore
         .collection('retailers')
         .where('retailerShopId', isEqualTo: retailerShopId)
@@ -60,7 +62,6 @@ class ConnectionService {
     }
 
     final retailerDoc = retailerSnapshot.docs.first;
-
     final retailerData = retailerDoc.data();
 
     if ((retailerData['mobile1'] ?? '').toString().trim() != mobile1.trim()) {
@@ -69,25 +70,36 @@ class ConnectionService {
 
     final retailerId = retailerDoc.id;
 
-    // Already connected check
-    final existingConnection = await _firestore
-        .collection('connections')
-        .doc(retailerId)
+    // Same Supplier + Same Retailer Duplicate Check
+    final existing = await _firestore
+        .collection('supplier_connections')
+        .where('supplierShopId', isEqualTo: supplierShopId)
+        .where('retailerId', isEqualTo: retailerId)
+        .limit(1)
         .get();
 
-    if (existingConnection.exists) {
+    if (existing.docs.isNotEmpty) {
       throw Exception('Retailer already connected');
     }
 
     final batch = _firestore.batch();
 
-    batch.set(_firestore.collection('connections').doc(retailerId), {
+    batch.set(_firestore.collection('supplier_connections').doc(), {
+      // Supplier
       'supplierShopId': supplierShopId,
+      'supplierName': shopData['shopName'] ?? '',
+      'supplierMobile1': shopData['mobile1'] ?? '',
+
+      // Retailer
       'retailerId': retailerId,
       'retailerShopId': retailerData['retailerShopId'] ?? '',
+
       'retailerName': retailerData['retailerName'] ?? '',
+
       'ownerName': retailerData['ownerName'] ?? '',
-      'mobile1': retailerData['mobile1'] ?? '',
+
+      'retailerMobile1': retailerData['mobile1'] ?? '',
+
       'connectedAt': FieldValue.serverTimestamp(),
     });
 
@@ -98,16 +110,17 @@ class ConnectionService {
     await batch.commit();
   }
 
-  Future<DocumentSnapshot> getMyConnection() async {
-    final user = FirebaseAuth.instance.currentUser;
-
-    return _firestore.collection('connections').doc(user!.uid).get();
-  }
-
   Stream<QuerySnapshot> retailersBySupplier(String supplierShopId) {
     return _firestore
-        .collection('connections')
+        .collection('supplier_connections')
         .where('supplierShopId', isEqualTo: supplierShopId)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> suppliersByRetailer(String retailerId) {
+    return _firestore
+        .collection('supplier_connections')
+        .where('retailerId', isEqualTo: retailerId)
         .snapshots();
   }
 }

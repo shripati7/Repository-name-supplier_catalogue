@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'role_selection_screen.dart';
-import 'supplier_dashboard_screen.dart';
+import 'my_suppliers_screen.dart';
 import 'retailer_catalogue_screen.dart';
 import 'retailer_login_screen.dart';
+import 'role_selection_screen.dart';
+import 'supplier_dashboard_screen.dart';
 
 class StartupRouterScreen extends StatefulWidget {
   const StartupRouterScreen({super.key});
@@ -35,7 +36,6 @@ class _StartupRouterScreenState extends State<StartupRouterScreen> {
     final firestore = FirebaseFirestore.instance;
 
     try {
-      // Supplier Check
       final supplierDoc = await firestore
           .collection('shops')
           .doc(user.uid)
@@ -46,28 +46,34 @@ class _StartupRouterScreenState extends State<StartupRouterScreen> {
         return;
       }
 
-      // Retailer Check
       final retailerDoc = await firestore
           .collection('retailers')
           .doc(user.uid)
           .get();
 
       if (retailerDoc.exists) {
-        final connectionDoc = await firestore
-            .collection('connections')
-            .doc(user.uid)
+        final suppliers = await firestore
+            .collection('supplier_connections')
+            .where('retailerId', isEqualTo: user.uid)
             .get();
 
-        if (connectionDoc.exists) {
-          final data = connectionDoc.data() ?? {};
-
-          final supplierShopId = (data['supplierShopId'] ?? '').toString();
-
-          navigateTo(RetailerCatalogueScreen(shopId: supplierShopId));
+        if (suppliers.docs.isEmpty) {
+          navigateTo(const RetailerWaitingScreen());
           return;
         }
 
-        navigateTo(const RetailerWaitingScreen());
+        if (suppliers.docs.length == 1) {
+          final data = suppliers.docs.first.data();
+
+          navigateTo(
+            RetailerCatalogueScreen(
+              shopId: (data['supplierShopId'] ?? '').toString(),
+            ),
+          );
+          return;
+        }
+
+        navigateTo(const MySuppliersScreen());
         return;
       }
 

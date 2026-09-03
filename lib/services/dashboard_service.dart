@@ -14,7 +14,7 @@ class DashboardService {
 
   Future<int> connectedRetailers(String supplierShopId) async {
     final snapshot = await _firestore
-        .collection('connections')
+        .collection('supplier_connections')
         .where('supplierShopId', isEqualTo: supplierShopId)
         .get();
 

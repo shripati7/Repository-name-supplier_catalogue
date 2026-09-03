@@ -7,6 +7,7 @@ import '../services/cart_service.dart';
 import '../services/product_service.dart';
 import 'cart_screen.dart';
 import 'my_orders_screen.dart';
+import 'retailer_order_analytics_screen.dart';
 import 'role_selection_screen.dart';
 
 class RetailerCatalogueScreen extends StatefulWidget {
@@ -114,6 +115,20 @@ class _RetailerCatalogueScreenState extends State<RetailerCatalogueScreen> {
                 );
               },
             ),
+
+            IconButton(
+              icon: const Icon(Icons.analytics),
+              tooltip: 'Order Analytics',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const RetailerOrderAnalyticsScreen(),
+                  ),
+                );
+              },
+            ),
+
             IconButton(
               icon: const Icon(Icons.shopping_cart),
               tooltip: 'Cart',
@@ -124,6 +139,7 @@ class _RetailerCatalogueScreenState extends State<RetailerCatalogueScreen> {
                 );
               },
             ),
+
             IconButton(
               icon: const Icon(Icons.logout),
               tooltip: 'Logout',

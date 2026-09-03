@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../services/connection_service.dart';
 import 'my_orders_screen.dart';
+import 'my_suppliers_screen.dart';
 import 'retailer_catalogue_screen.dart';
 import 'retailer_signup_screen.dart';
 
@@ -30,12 +30,25 @@ class _RetailerLoginScreenState extends State<RetailerLoginScreen> {
         password: passwordController.text.trim(),
       );
 
-      final connection = await ConnectionService().getMyConnection();
+      final user = FirebaseAuth.instance.currentUser!;
+
+      final suppliers = await FirebaseFirestore.instance
+          .collection('supplier_connections')
+          .where('retailerId', isEqualTo: user.uid)
+          .get();
 
       if (!mounted) return;
 
-      if (connection.exists) {
-        final data = connection.data() as Map<String, dynamic>;
+      if (suppliers.docs.isEmpty) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const RetailerWaitingScreen()),
+        );
+        return;
+      }
+
+      if (suppliers.docs.length == 1) {
+        final data = suppliers.docs.first.data();
 
         Navigator.pushReplacement(
           context,
@@ -45,12 +58,13 @@ class _RetailerLoginScreenState extends State<RetailerLoginScreen> {
             ),
           ),
         );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const RetailerWaitingScreen()),
-        );
+        return;
       }
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MySuppliersScreen()),
+      );
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
 
