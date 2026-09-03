@@ -41,6 +41,25 @@ class ConnectionService {
 
     final subscriptionData = subscriptionDoc.data()!;
 
+    // Expiry Check
+    final endDateRaw = subscriptionData['endDate'];
+
+    if (endDateRaw == null) {
+      throw Exception(
+        'Subscription expired. Contact admin on WhatsApp: +91 9810365166',
+      );
+    }
+
+    final endDate = (endDateRaw as Timestamp).toDate();
+
+    if (DateTime.now().isAfter(endDate)) {
+      await subscriptionDoc.reference.update({'status': 'Expired'});
+
+      throw Exception(
+        'Subscription expired. Contact admin on WhatsApp: +91 9810365166',
+      );
+    }
+
     final retailerLimit = (subscriptionData['retailerLimit'] ?? 0) as int;
 
     final connectedRetailers =
@@ -93,11 +112,8 @@ class ConnectionService {
       // Retailer
       'retailerId': retailerId,
       'retailerShopId': retailerData['retailerShopId'] ?? '',
-
       'retailerName': retailerData['retailerName'] ?? '',
-
       'ownerName': retailerData['ownerName'] ?? '',
-
       'retailerMobile1': retailerData['mobile1'] ?? '',
 
       'connectedAt': FieldValue.serverTimestamp(),

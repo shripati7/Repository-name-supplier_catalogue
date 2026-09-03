@@ -1,5 +1,6 @@
 class SubscriptionModel {
   final String supplierId;
+
   final String planName;
   final String status;
 
@@ -8,6 +9,7 @@ class SubscriptionModel {
 
   final int retailerLimit;
   final int connectedRetailers;
+
   final int freeTrialDays;
 
   SubscriptionModel({
@@ -33,4 +35,9 @@ class SubscriptionModel {
       'freeTrialDays': freeTrialDays,
     };
   }
+
+  static const String freeTrial = 'Free Trial';
+  static const String basic = 'Basic';
+  static const String silver = 'Silver';
+  static const String gold = 'Gold';
 }

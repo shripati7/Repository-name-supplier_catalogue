@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../services/subscription_service.dart';
 import 'my_suppliers_screen.dart';
 import 'retailer_catalogue_screen.dart';
 import 'retailer_login_screen.dart';
@@ -42,6 +43,8 @@ class _StartupRouterScreenState extends State<StartupRouterScreen> {
           .get();
 
       if (supplierDoc.exists) {
+        await SubscriptionService().markExpiredIfNeeded(user.uid);
+
         navigateTo(const SupplierDashboardScreen());
         return;
       }
