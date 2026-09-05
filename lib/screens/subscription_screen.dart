@@ -54,11 +54,11 @@ class SubscriptionScreen extends StatelessWidget {
   }) {
     return Card(
       child: ListTile(
-        title: Text(title),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(details),
         trailing: ElevatedButton(
           onPressed: onTap,
-          child: const Text('Contact'),
+          child: const Text('Upgrade'),
         ),
       ),
     );
@@ -105,9 +105,7 @@ class SubscriptionScreen extends StatelessWidget {
                           'Current Plan',
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
-
                         const SizedBox(height: 12),
-
                         Text(
                           data['planName'] ?? '',
                           style: const TextStyle(
@@ -115,29 +113,47 @@ class SubscriptionScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-
                         const SizedBox(height: 8),
-
                         Text('Status: ${data['status']}'),
-
                         Text('Retailer Limit: ${data['retailerLimit']}'),
-
                         Text(
                           'Connected Retailers: ${data['connectedRetailers']}',
                         ),
-
                         const Divider(height: 30),
-
                         Text('Start Date: ${formatDate(startDate)}'),
-
                         Text('Expiry Date: ${formatDate(endDate)}'),
-
                         const SizedBox(height: 8),
-
                         Text(
                           'Days Remaining: $daysRemaining',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                Card(
+                  color: Colors.amber.shade50,
+                  child: const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'After Free Trial Expiry',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text('• Existing retailers remain connected'),
+                        Text('• Existing orders remain accessible'),
+                        Text('• New retailer connections are blocked'),
+                        Text('• Retailers can view catalogue'),
+                        Text('• New orders require an active paid plan'),
                       ],
                     ),
                   ),
@@ -157,26 +173,29 @@ class SubscriptionScreen extends StatelessWidget {
 
                 const Card(
                   child: ListTile(
-                    title: Text('Free Trial'),
-                    subtitle: Text('5 Retailers â€¢ 60 Days'),
+                    title: Text(
+                      'Free Trial',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text('5 Retailers • Free for 60 Days'),
                   ),
                 ),
 
                 planCard(
-                  title: 'Basic',
-                  details: '10 Retailers â€¢ â‚¹999/month',
+                  title: 'Starter',
+                  details: '10 Retailers • ₹999/month',
                   onTap: openWhatsApp,
                 ),
 
                 planCard(
-                  title: 'Silver',
-                  details: '15 Retailers â€¢ â‚¹1499/month',
+                  title: 'Growth ⭐ Most Popular',
+                  details: '15 Retailers • ₹1499/month',
                   onTap: openWhatsApp,
                 ),
 
                 planCard(
-                  title: 'Gold',
-                  details: '20 Retailers â€¢ â‚¹1999/month',
+                  title: 'Business',
+                  details: '20 Retailers • ₹1999/month',
                   onTap: openWhatsApp,
                 ),
 
@@ -200,7 +219,7 @@ class SubscriptionScreen extends StatelessWidget {
                         ElevatedButton.icon(
                           onPressed: openWhatsApp,
                           icon: const Icon(Icons.support_agent),
-                          label: const Text('WhatsApp Support'),
+                          label: const Text('Upgrade via WhatsApp'),
                         ),
 
                         const SizedBox(height: 10),
