@@ -48,6 +48,7 @@ class OrderService {
     final quantity = cartItem['quantity'] ?? 1;
 
     await _firestore.collection('orders').add({
+      'supplierId': cartItem['supplierId'] ?? '',
       'supplierShopId': cartItem['supplierShopId'] ?? '',
       'retailerId': user.uid,
       'retailerShopId': retailer.retailerShopId,
