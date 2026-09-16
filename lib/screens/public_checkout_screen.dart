@@ -45,16 +45,25 @@ class _PublicCheckoutScreenState extends State<PublicCheckoutScreen> {
   }
 
   Future<void> placeOrder() async {
+    if (loading) return;
+
     final retailerName = retailerNameController.text.trim();
-
     final shopName = shopNameController.text.trim();
-
     final mobile = mobileController.text.trim();
 
     if (retailerName.isEmpty || shopName.isEmpty || mobile.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
+      return;
+    }
+
+    if (!RegExp(r'^[0-9]{10}$').hasMatch(mobile)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid 10 digit mobile number'),
+        ),
+      );
       return;
     }
 
@@ -86,7 +95,6 @@ class _PublicCheckoutScreenState extends State<PublicCheckoutScreen> {
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
                 child: const Text('OK'),
@@ -148,7 +156,8 @@ class _PublicCheckoutScreenState extends State<PublicCheckoutScreen> {
 
             TextField(
               controller: mobileController,
-              keyboardType: TextInputType.phone,
+              keyboardType: TextInputType.number,
+              maxLength: 10,
               decoration: const InputDecoration(
                 labelText: 'Mobile Number',
                 border: OutlineInputBorder(),

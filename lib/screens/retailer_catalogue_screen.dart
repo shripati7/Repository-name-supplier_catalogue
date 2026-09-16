@@ -115,7 +115,6 @@ class _RetailerCatalogueScreenState extends State<RetailerCatalogueScreen> {
                 );
               },
             ),
-
             IconButton(
               icon: const Icon(Icons.analytics),
               tooltip: 'Order Analytics',
@@ -128,7 +127,6 @@ class _RetailerCatalogueScreenState extends State<RetailerCatalogueScreen> {
                 );
               },
             ),
-
             IconButton(
               icon: const Icon(Icons.shopping_cart),
               tooltip: 'Cart',
@@ -139,7 +137,6 @@ class _RetailerCatalogueScreenState extends State<RetailerCatalogueScreen> {
                 );
               },
             ),
-
             IconButton(
               icon: const Icon(Icons.logout),
               tooltip: 'Logout',
@@ -209,11 +206,23 @@ class _RetailerCatalogueScreenState extends State<RetailerCatalogueScreen> {
                         child: ListTile(
                           leading:
                               (data['imageUrl'] ?? '').toString().isNotEmpty
-                              ? Image.network(
-                                  data['imageUrl'],
-                                  width: 60,
-                                  height: 60,
-                                  fit: BoxFit.cover,
+                              ? GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => FullScreenImageScreen(
+                                          imageUrl: data['imageUrl'],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Image.network(
+                                    data['imageUrl'],
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
                                 )
                               : const Icon(Icons.image),
                           title: Text(data['productName'] ?? ''),
@@ -256,6 +265,30 @@ class _RetailerCatalogueScreenState extends State<RetailerCatalogueScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class FullScreenImageScreen extends StatelessWidget {
+  final String imageUrl;
+
+  const FullScreenImageScreen({super.key, required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: Center(
+        child: InteractiveViewer(
+          minScale: 0.5,
+          maxScale: 5,
+          child: Image.network(imageUrl),
         ),
       ),
     );

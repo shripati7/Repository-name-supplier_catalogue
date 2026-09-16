@@ -49,7 +49,9 @@ class PublicOrderService {
       'retailerId': 'WEB',
       'retailerShopId': retailerShopName,
       'retailerName': retailerName,
-      'retailerEmail': retailerMobile,
+
+      // Keep email empty for public orders
+      'retailerEmail': '',
 
       // Product Fields
       'productId': item['productId'] ?? '',
@@ -70,9 +72,10 @@ class PublicOrderService {
       // Status
       'status': 'Pending',
 
-      // Extra Info
+      // Public Order Metadata
       'orderSource': 'WEB',
       'retailerMobile': retailerMobile,
+      'mobileVerified': false,
 
       'createdAt': FieldValue.serverTimestamp(),
     });
