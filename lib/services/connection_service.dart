@@ -105,6 +105,7 @@ class ConnectionService {
 
     batch.set(_firestore.collection('supplier_connections').doc(), {
       // Supplier
+      'supplierId': user.uid,
       'supplierShopId': supplierShopId,
       'supplierName': shopData['shopName'] ?? '',
       'supplierMobile1': shopData['mobile1'] ?? '',

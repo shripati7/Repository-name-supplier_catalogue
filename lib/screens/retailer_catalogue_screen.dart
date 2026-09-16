@@ -240,6 +240,7 @@ class _RetailerCatalogueScreenState extends State<RetailerCatalogueScreen> {
                               await CartService().addToCart(
                                 productId: docs[index].id,
                                 supplierShopId: widget.shopId,
+                                supplierId: data['supplierId'] ?? '',
                                 productName: data['productName'] ?? '',
                                 category: data['category'] ?? '',
                                 brand: data['brand'] ?? '',

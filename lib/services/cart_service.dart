@@ -7,6 +7,7 @@ class CartService {
   Future<void> addToCart({
     required String productId,
     required String supplierShopId,
+    required String supplierId,
     required String productName,
     required String category,
     required String brand,
@@ -35,6 +36,7 @@ class CartService {
       await docRef.set({
         'productId': productId,
         'supplierShopId': supplierShopId,
+        'supplierId': supplierId,
         'productName': productName,
         'category': category,
         'brand': brand,

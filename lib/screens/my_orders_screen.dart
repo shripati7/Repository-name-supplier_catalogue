@@ -76,6 +76,7 @@ class MyOrdersScreen extends StatelessWidget {
                               await CartService().addToCart(
                                 productId: data['productId'] ?? '',
                                 supplierShopId: data['supplierShopId'] ?? '',
+                                supplierId: data['supplierId'] ?? '',
                                 productName: data['productName'] ?? '',
                                 category: data['category'] ?? '',
                                 brand: data['brand'] ?? '',
