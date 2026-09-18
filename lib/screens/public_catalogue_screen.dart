@@ -42,6 +42,7 @@ class _PublicCatalogueScreenState extends State<PublicCatalogueScreen> {
         cartItems.add({
           'productId': productId,
           'supplierShopId': widget.shopId,
+          'supplierId': product['supplierId'] ?? '',
           'productName': product['productName'] ?? '',
           'category': product['category'] ?? '',
           'brand': product['brand'] ?? '',
@@ -80,7 +81,6 @@ class _PublicCatalogueScreenState extends State<PublicCatalogueScreen> {
                   );
                 },
               ),
-
               if (cartItems.isNotEmpty)
                 Positioned(
                   right: 8,
@@ -114,7 +114,6 @@ class _PublicCatalogueScreenState extends State<PublicCatalogueScreen> {
               },
             ),
           ),
-
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance

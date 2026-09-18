@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 
@@ -10,7 +11,13 @@ class StorageService {
     try {
       debugPrint('UPLOAD START');
 
-      final ref = _storage.ref().child('products/$fileName.jpg');
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) {
+        throw Exception('User not logged in');
+      }
+
+      final ref = _storage.ref().child('products/${user.uid}/$fileName.jpg');
 
       await ref.putFile(imageFile);
 

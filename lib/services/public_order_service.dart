@@ -43,6 +43,8 @@ class PublicOrderService {
     final quantity = item['quantity'] ?? 1;
 
     await _firestore.collection('orders').add({
+      // Ownership
+      'supplierId': item['supplierId'] ?? '',
       'supplierShopId': supplierShopId,
 
       // Public Order Fields
