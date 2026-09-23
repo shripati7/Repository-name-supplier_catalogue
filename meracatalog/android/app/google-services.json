@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "712220627429",
+    "project_id": "meracatalog-acb30",
+    "storage_bucket": "meracatalog-acb30.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:712220627429:android:26e16639fa6fa1829c5f0c",
+        "android_client_info": {
+          "package_name": "com.example.meracatalog"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwb9pyTTU6jxkV7zPRVym3Bbb20XZUk-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:712220627429:android:b33b00d8abc0f4369c5f0c",
+        "android_client_info": {
+          "package_name": "com.meracatalog.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwb9pyTTU6jxkV7zPRVym3Bbb20XZUk-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
